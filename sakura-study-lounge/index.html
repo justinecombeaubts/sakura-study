@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakura Study Lounge</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <h1 class="logo">🌸 Sakura Study Lounge</h1>
+        <ul class="nav-links">
+            <li><button class="nav-btn active" data-module="agenda">📅 Agenda</button></li>
+            <li><button class="nav-btn" data-module="notes">📚 Cours & Fiches</button></li>
+            <li><button class="nav-btn" data-module="grades">📊 Relevé de Notes</button></li>
+            <li><button class="nav-btn" data-module="flashcards">🗂️ Flashcards</button></li>
+            <li><button class="nav-btn" data-module="wellness">✨ Bien-être</button></li>
+        </ul>
+        <div class="ambiance-controls">
+            <button id="toggle-music" class="ambiance-btn">🎵</button>
+            <button id="toggle-sunset" class="ambiance-btn">🌅</button>
+        </div>
+    </nav>
+
+    <!-- Conteneur principal pour les modules -->
+    <main class="main-container">
+        <!-- Module Agenda -->
+        <section id="agenda-module" class="module active">
+            <h2>📅 Mon Agenda Intelligent</h2>
+
+            <!-- Contrôles de navigation pour l'agenda hebdomadaire -->
+            <div class="weekly-agenda-controls">
+                <button id="prev-week-btn" class="nav-week-btn">⬅️ Semaine précédente</button>
+                <div id="current-week-display" class="current-week">Semaine du <span id="week-start-date"></span> au
+                    <span id="week-end-date"></span>
+                </div>
+                <button id="next-week-btn" class="nav-week-btn">Semaine suivante ➡️</button>
+            </div>
+
+            <!-- Boutons pour ajouter une tâche ou un cours -->
+            <div class="agenda-add-controls">
+                <button id="add-task-btn" class="add-btn">➕ Ajouter une tâche</button>
+                <button id="add-course-btn" class="add-btn">➕ Ajouter un cours</button>
+            </div>
+
+            <!-- Calendrier hebdomadaire -->
+            <div class="weekly-calendar">
+                <div class="calendar-header">
+                    <div class="day-header">Lundi</div>
+                    <div class="day-header">Mardi</div>
+                    <div class="day-header">Mercredi</div>
+                    <div class="day-header">Jeudi</div>
+                    <div class="day-header">Vendredi</div>
+                    <div class="day-header">Samedi</div>
+                    <div class="day-header">Dimanche</div>
+                </div>
+                <div class="calendar-days" id="calendar-days">
+                    <!-- Les jours et tâches/cours seront ajoutés dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Fenêtre modale pour ajouter/modifier une tâche -->
+            <div id="task-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3 id="modal-title">Ajouter une tâche</h3>
+                    <form id="task-form">
+                        <div class="form-group">
+                            <label for="task-title">Titre *</label>
+                            <input type="text" id="task-title" required placeholder="Ex: Rédiger un essai">
+                        </div>
+                        <div class="form-group">
+                            <label for="task-description">Description</label>
+                            <textarea id="task-description" rows="2" placeholder="Détails de la tâche..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-start-date">Date de début *</label>
+                            <input type="date" id="task-start-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-end-date">Date de fin *</label>
+                            <input type="date" id="task-end-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-time">Temps estimé (min)</label>
+                            <input type="number" id="task-time" min="1" placeholder="Ex: 60">
+                        </div>
+                        <div class="form-group">
+                            <label for="task-status">Statut</label>
+                            <select id="task-status">
+                                <option value="todo">À faire</option>
+                                <option value="in-progress">En cours</option>
+                                <option value="done">Terminé</option>
+                                <option value="graded">Noté</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="grade-fields" style="display: none;">
+                            <label for="task-grade">Note /20</label>
+                            <input type="number" id="task-grade" min="0" max="20" step="0.1" placeholder="Ex: 15.5">
+                            <label for="task-feedback">Commentaires</label>
+                            <textarea id="task-feedback" rows="2" placeholder="Retour du professeur..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Fenêtre modale pour ajouter/modifier un cours -->
+            <div id="course-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3 id="course-modal-title">Ajouter un cours</h3>
+                    <form id="course-form">
+                        <div class="form-group">
+                            <label for="course-title">Matière *</label>
+                            <input type="text" id="course-title" required placeholder="Ex: Mathématiques">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-description">Description</label>
+                            <textarea id="course-description" rows="2"
+                                placeholder="Ex: Cours sur les dérivées"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-day">Jour *</label>
+                            <select id="course-day" required>
+                                <option value="0">Lundi</option>
+                                <option value="1">Mardi</option>
+                                <option value="2">Mercredi</option>
+                                <option value="3">Jeudi</option>
+                                <option value="4">Vendredi</option>
+                                <option value="5">Samedi</option>
+                                <option value="6">Dimanche</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-start-time">Heure de début *</label>
+                            <input type="time" id="course-start-time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-end-time">Heure de fin *</label>
+                            <input type="time" id="course-end-time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-location">Salle/Lieu</label>
+                            <input type="text" id="course-location" placeholder="Ex: Salle A101">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-color">Couleur</label>
+                            <input type="color" id="course-color" value="#ffb366">
+                        </div>
+                        <!-- Champ pour les pièces jointes -->
+                        <div class="form-group">
+                            <label for="task-attachments">Pièces jointes</label>
+                            <input type="file" id="task-attachments" multiple
+                                accept="image/*,.pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx">
+                            <div id="attachments-preview" class="attachments-preview"></div>
+                        </div>
+                        <button type="submit" class="submit-btn">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module Cours & Fiches -->
+        <section id="notes-module" class="module">
+            <h2>📚 Espace Cours & Fiches</h2>
+            <div class="notes-controls">
+                <input type="text" id="folder-input" placeholder="Nouveau dossier (ex: Mathématiques)">
+                <button id="add-folder-btn">➕ Dossier</button>
+            </div>
+            <div id="folders-list" class="folders-list"></div>
+
+            <!-- Barre d'outils pour l'édition de notes -->
+            <div id="note-toolbar" class="note-toolbar" style="display: none;">
+                <div class="toolbar-group">
+                    <select id="font-selector" class="toolbar-select">
+                        <option value="Comfortaa">Comfortaa</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Montserrat">Montserrat</option>
+                    </select>
+                </div>
+                <div class="toolbar-group">
+                    <select id="font-size-selector" class="toolbar-select">
+                        <option value="12px">12px</option>
+                        <option value="14px">14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                        <option value="20px">20px</option>
+                        <option value="24px">24px</option>
+                        <option value="28px">28px</option>
+                        <option value="32px">32px</option>
+                    </select>
+                </div>
+                <div class="toolbar-group">
+                    <input type="color" id="text-color-picker" class="toolbar-color" value="#3a3a3a"
+                        title="Couleur du texte">
+                </div>
+                <div class="toolbar-group">
+                    <input type="color" id="bg-color-picker" class="toolbar-color" value="#ffffff"
+                        title="Couleur de fond">
+                </div>
+                <div class="toolbar-group">
+                    <button id="bold-btn" class="toolbar-btn" title="Gras">🔤</button>
+                    <button id="italic-btn" class="toolbar-btn" title="Italique">🔤</button>
+                    <button id="underline-btn" class="toolbar-btn" title="Souligné">🔤</button>
+                    <button id="align-left-btn" class="toolbar-btn" title="Aligner à gauche">≡</button>
+                    <button id="align-center-btn" class="toolbar-btn" title="Centrer">≡</button>
+                    <button id="align-right-btn" class="toolbar-btn" title="Aligner à droite">≡</button>
+                </div>
+                <div class="toolbar-group">
+                    <button id="save-note-btn" class="toolbar-btn save-btn" title="Enregistrer">💾</button>
+                </div>
+            </div>
+
+            <div id="notes-container" class="notes-container"></div>
+        </section>
+
+        <!-- Module Relevé de Notes -->
+        <section id="grades-module" class="module">
+            <h2>📊 Relevé de Notes</h2>
+            <div class="grades-controls">
+                <input type="text" id="subject-input" placeholder="Nouvelle matière (ex: Physique)">
+                <button id="add-subject-btn">➕ Matière</button>
+            </div>
+            <div id="subjects-list" class="subjects-list"></div>
+        </section>
+
+        <!-- Module Flashcards -->
+        <section id="flashcards-module" class="module">
+            <h2>🗂️ Flashcards</h2>
+            <div class="flashcards-controls">
+                <input type="text" id="flashcard-pack-input" placeholder="Nouveau paquet (ex: Vocabulaire Anglais)">
+                <button id="add-pack-btn">➕ Paquet</button>
+            </div>
+            <div id="flashcard-packs-list" class="flashcard-packs-list"></div>
+            <div id="flashcard-viewer" class="flashcard-viewer"></div>
+        </section>
+
+        <!-- Module Bien-être -->
+        <section id="wellness-module" class="module">
+            <h2>✨ Bien-être & Gamification</h2>
+            <div class="wellness-section">
+                <div class="mood-tracker">
+                    <h3>🌈 Mood Tracker</h3>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="happy">😊 Heureux</button>
+                        <button class="mood-btn" data-mood="calm">😌 Calme</button>
+                        <button class="mood-btn" data-mood="tired">😴 Fatigué</button>
+                        <button class="mood-btn" data-mood="stressed">😨 Stressé</button>
+                    </div>
+                </div>
+                <div class="sakura-garden">
+                    <h3>🌸 Jardin des Cerisiers</h3>
+                    <div id="sakura-tree" class="sakura-tree">
+                        <!-- Les pétales seront ajoutés dynamiquement -->
+                    </div>
+                    <p>Terminez des tâches pour faire fleurir l'arbre !</p>
+                </div>
+                <div class="kindness-box">
+                    <h3>💌 Boîte à Douceur</h3>
+                    <button id="kindness-btn">🎁 Ouvrir un mot</button>
+                    <div id="kindness-message" class="kindness-message"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Mini-lecteur audio -->
+    <div id="audio-player" class="audio-player">
+        <audio id="background-music" loop>
+            <source src="assets/audio/lofi.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Mots d'encouragement flottants -->
+    <div class="floating-words" id="floating-words"></div>
+
+    <!-- Scripts -->
+    <script src="js/agenda.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/grades.js"></script>
+    <script src="js/flashcards.js"></script>
+    <script src="js/ambiance.js"></script>
+    <script src="js/wellness.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
