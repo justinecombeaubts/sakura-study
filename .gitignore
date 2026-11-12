@@ -1,0 +1,17 @@
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dépendances et caches
+node_modules/
+__pycache__/
+.venv/
+
+# Journaux
+*.log
